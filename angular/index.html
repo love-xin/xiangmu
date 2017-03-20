@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html ng-app="indexApp">
+
+	<head>
+		<meta charset="UTF-8">
+		<!--移动端必配的一句话-->
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+
+		<link rel="stylesheet" href="css/weui.css" />
+		<link rel="stylesheet" href="css/swiper.css" />
+
+	</head>
+
+	<body>
+		<div ui-view=""></div>
+	</body>
+	<script src="js/angular.js"></script>
+	<script src="js/angular-ui-router.js"></script>
+
+	<script src="js/swiper.js"></script>
+
+	<script>
+		var app = angular.module('indexApp', ['controller','routers','directives']);
+		//服务器模块================
+		var controller = angular.module('controller', []);
+		controller.controller('indexCtrl', ['$scope', function($scope) {
+			
+			
+		}]).controller('recommendCtrl', ['$scope', '$http','$state',function($scope,$http,$state) {
+			//搜索框状态码
+			$scope.isSearch = false;
+			$scope.searchName = '';
+			//ng-focus指令聚焦
+			$scope.search = function(){
+				
+				$scope.isSearch = true;
+			}
+			//点击取消
+			$scope.cancel = function(){
+				$scope.isSearch = false;
+				$scope.searchName = ''
+			}
+			//console.log($state.params.id)
+			
+			//遮罩层
+			$scope.isShowActionSheet = false
+			$scope.showActionSheet = function() {
+				$scope.isShowActionSheet = true
+				console.log($scope.isShowActionSheet)
+			}
+			$scope.hideActionSheet = function() {
+				$scope.isShowActionSheet = false
+			}
+			
+			//加载更多隐藏
+			$scope.isLoadMore = false;
+		
+			//ajax数据请求
+			$scope.page = 1;
+			$scope.news = [];
+			$scope.loadMore = function(){
+				
+				$http.get('js/show_list.json',{
+					params : {
+						page : $scope.page++,
+						channel_id: $state.params.id 
+					}
+				}).success(function(data){
+					//写上页面
+					$scope.news = $scope.news.concat(data.news_list);
+					$scope.isLoadMore = true;
+					
+				})
+				
+			}
+			$scope.loadMore();
+		}]).controller('detailCtrl', ['$scope','$state', function($scope,$state) {
+			//console.log($state.params)
+			$scope.text = $state.params.text;
+			$scope.title = $state.params.title;
+			
+			//图片详情=放大图片
+			$scope.isGallery = false;
+			$scope.gallery = function(nimage){
+				$scope.isGallery = true;
+				$scope.imgUrl = nimage;		
+			}
+			
+		}]);
+		//================路由模块==================
+		var routers = angular.module('routers', ['ui.router']);
+		routers.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
+			$stateProvider.state('index', {
+				url: '/index',
+				templateUrl: 'template/index.html',
+				controller: 'indexCtrl'
+			}).state('index.recommend', {
+				url: '/recommend/:id',
+				templateUrl: 'template/recommend.html',
+				controller : 'recommendCtrl'
+			}).state('index.hot',{
+				url :'/hot/:id',
+				templateUrl:'template/hot.html' 
+			}).state('index.entertainment',{
+				url :'/entertainment/:id',
+				templateUrl:'template/entertainment.html'
+			}).state('detail', {
+				url: '/detail/:id/:text/:title',
+				templateUrl: 'template/detail.html',
+				controller: 'detailCtrl'
+			});
+			//默认显示
+			$urlRouterProvider.when('', '/index')
+		}])
+
+		//封装html===========组件==========
+		var directives = angular.module('directives', []);
+		directives.directive('wheader', function() {
+			return {
+				templateUrl: 'directive/wheader.html'
+			}
+		}).directive('wsearch',function(){
+			return {
+				templateUrl :'directive/wsearch.html'
+			}
+		}).directive('wcarousel', function() {
+			return {
+				templateUrl: 'directive/wcarousel.html',
+				link: function(scope, ele, attr) {
+					var swiper = new Swiper('.swiper-container', {
+						pagination: '.swiper-pagination',
+						paginationClickable: true
+					}); 
+				}
+			}
+		}).directive('wpanel', function() {
+			return {
+				templateUrl: 'directive/wpanel.html'
+			}
+		}).directive('wactionsheet', function() {
+			return {
+				templateUrl: 'directive/wactionsheet.html'
+			}
+		})
+	</script>
+
+</html>
