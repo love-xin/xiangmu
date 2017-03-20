@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<div id="index">
+			<span><a>价格</a></span><span><a>销量</a></span>
+			<ul>
+				<li v-for = 'arr in arrs'>name:{{arr.name}} price:{{arr.price}}</li>
+			</ul>
+		</div>
+	</body>
+	<script src="js/vue.js"></script>
+	<script>
+		new Vue({
+			el:'#index',
+			data: {
+				arrs : [{
+					name : 'phone',
+					price : 5999,
+					xiaoL :133
+				},{
+					name : 'none7',
+					price : 3999,
+					xiaoL :213
+				},{
+					name : '诺基亚',
+					price : 1999,
+					xiaoL :435
+				},{
+					name : 'mac pro',
+					price : 11999,
+					xiaoL :6742
+				},{
+					name : 'mar air',
+					price : 9999,
+					xiaoL :34
+				},{
+					name : '小米',
+					price : 2999,
+					xiaoL :1234
+				},{
+					name : '神舟2',
+					price : 7999,
+					xiaoL :123
+				},{
+					name : 'window',
+					price : 12999,
+					xiaoL :780
+				}]
+			}
+		})
+	</script>
+</html>
